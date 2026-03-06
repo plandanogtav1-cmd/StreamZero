@@ -3,12 +3,13 @@ import { tmdbFetch } from '@/lib/tmdb';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const [detail, recommendations] = await Promise.all([
-      tmdbFetch(`/tv/${params.id}`, { append_to_response: 'credits,videos' }),
-      tmdbFetch(`/tv/${params.id}/recommendations`),
+      tmdbFetch(`/tv/${id}`, { append_to_response: 'credits,videos' }),
+      tmdbFetch(`/tv/${id}/recommendations`),
     ]);
     return NextResponse.json({ detail, recommendations });
   } catch {
