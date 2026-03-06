@@ -1,7 +1,7 @@
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p';
 
-function getHeaders() {
+function getHeaders(): Record<string, string> {
   const key = process.env.TMDB_API_KEY;
   if (!key) throw new Error('TMDB_API_KEY is not set');
   
@@ -12,12 +12,11 @@ function getHeaders() {
       Authorization: `Bearer ${key}`,
       'Content-Type': 'application/json',
     };
-  } else {
-    // v3 API key - use query param instead
-    return {
-      'Content-Type': 'application/json',
-    };
   }
+  // v3 API key - use query param instead
+  return {
+    'Content-Type': 'application/json',
+  };
 }
 
 export async function tmdbFetch<T>(

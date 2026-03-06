@@ -18,7 +18,7 @@ async function getMovie(id: string) {
 
 async function getSavedProgress(tmdbId: number) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
 

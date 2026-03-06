@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = { title: 'Profile' };
 
 export default async function ProfilePage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) redirect('/login');

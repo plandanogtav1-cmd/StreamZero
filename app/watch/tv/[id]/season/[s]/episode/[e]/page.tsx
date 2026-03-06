@@ -16,7 +16,7 @@ async function getShow(id: string) {
 
 async function getSavedProgress(tmdbId: number, season: number, episode: number) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
 

@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = { title: 'My Watchlist' };
 
 export default async function WatchlistPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) redirect('/login');
