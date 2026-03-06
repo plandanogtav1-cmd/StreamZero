@@ -16,8 +16,9 @@ async function getTVShow(id: string) {
   return res.json();
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const data = await getTVShow(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const data = await getTVShow(id);
   const show = data?.detail;
   if (!show) return { title: 'TV Show' };
   return {
@@ -31,8 +32,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function TVShowPage({ params }: { params: { id: string } }) {
-  const data = await getTVShow(params.id);
+export default async function TVShowPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const data = await getTVShow(id);
 
   if (!data?.detail) {
     return (

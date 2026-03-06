@@ -34,24 +34,25 @@ async function getSavedProgress(tmdbId: number) {
   }
 }
 
-export default async function WatchMoviePage({ params }: { params: { id: string } }) {
+export default async function WatchMoviePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const [movie, progress] = await Promise.all([
-    getMovie(params.id),
-    getSavedProgress(parseInt(params.id)),
+    getMovie(id),
+    getSavedProgress(parseInt(id)),
   ]);
 
   const resumeSeconds = progress?.progress_percent && progress.progress_percent < 95
     ? (progress.current_seconds || 0)
     : 0;
 
-  const playerUrl = buildMovieUrl(parseInt(params.id), {
+  const playerUrl = buildMovieUrl(parseInt(id), {
     autoPlay: true,
     progress: resumeSeconds,
   });
 
   return (
     <WatchMovieClient
-      tmdbId={parseInt(params.id)}
+      tmdbId={parseInt(id)}
       title={movie?.title || 'Movie'}
       playerUrl={playerUrl}
       resumeSeconds={resumeSeconds}

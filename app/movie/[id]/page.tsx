@@ -18,8 +18,9 @@ async function getMovie(id: string) {
   return res.json();
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const data = await getMovie(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const data = await getMovie(id);
   const movie = data?.detail;
   if (!movie) return { title: 'Movie' };
   return {
@@ -33,8 +34,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function MoviePage({ params }: { params: { id: string } }) {
-  const data = await getMovie(params.id);
+export default async function MoviePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const data = await getMovie(id);
 
   if (!data?.detail) {
     return (

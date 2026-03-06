@@ -35,21 +35,22 @@ async function getSavedProgress(tmdbId: number, season: number, episode: number)
 export default async function WatchTVPage({
   params,
 }: {
-  params: { id: string; s: string; e: string };
+  params: Promise<{ id: string; s: string; e: string }>;
 }) {
-  const season = parseInt(params.s);
-  const episode = parseInt(params.e);
+  const { id, s, e } = await params;
+  const season = parseInt(s);
+  const episode = parseInt(e);
 
   const [show, progress] = await Promise.all([
-    getShow(params.id),
-    getSavedProgress(parseInt(params.id), season, episode),
+    getShow(id),
+    getSavedProgress(parseInt(id), season, episode),
   ]);
 
   const resumeSeconds = progress?.progress_percent && progress.progress_percent < 95
     ? (progress.current_seconds || 0)
     : 0;
 
-  const playerUrl = buildTvUrl(parseInt(params.id), season, episode, {
+  const playerUrl = buildTvUrl(parseInt(id), season, episode, {
     autoPlay: true,
     nextEpisode: true,
     episodeSelector: true,
@@ -58,7 +59,7 @@ export default async function WatchTVPage({
 
   return (
     <WatchTVClient
-      tmdbId={parseInt(params.id)}
+      tmdbId={parseInt(id)}
       showName={show?.name || 'TV Show'}
       season={season}
       episode={episode}

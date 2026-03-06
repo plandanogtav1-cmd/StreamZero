@@ -21,15 +21,16 @@ async function getShow(tvId: string) {
 export default async function EpisodePage({
   params,
 }: {
-  params: { id: string; s: string; e: string };
+  params: Promise<{ id: string; s: string; e: string }>;
 }) {
+  const { id, s, e } = await params;
   const [seasonData, showData] = await Promise.all([
-    getSeason(params.id, params.s),
-    getShow(params.id),
+    getSeason(id, s),
+    getShow(id),
   ]);
 
-  const episodeNum = parseInt(params.e);
-  const seasonNum = parseInt(params.s);
+  const episodeNum = parseInt(e);
+  const seasonNum = parseInt(s);
   const episodes = seasonData?.episodes || [];
   const episode = episodes.find((ep: any) => ep.episode_number === episodeNum);
   const show = showData?.detail;
@@ -42,13 +43,13 @@ export default async function EpisodePage({
     <div className="min-h-screen pt-20 pb-16 px-4 md:px-8 max-w-5xl mx-auto">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-textMuted mb-6" aria-label="Breadcrumb">
-        <Link href={`/tv/${params.id}`} className="hover:text-primary transition-colors">
+        <Link href={`/tv/${id}`} className="hover:text-primary transition-colors">
           {show?.name || 'Show'}
         </Link>
         <span>/</span>
-        <span>Season {params.s}</span>
+        <span>Season {s}</span>
         <span>/</span>
-        <span className="text-textPrimary">Episode {params.e}</span>
+        <span className="text-textPrimary">Episode {e}</span>
       </nav>
 
       {/* Episode Info */}
@@ -76,7 +77,7 @@ export default async function EpisodePage({
               </h1>
             </div>
             <Button asChild size="lg" className="flex-shrink-0">
-              <Link href={`/watch/tv/${params.id}/season/${params.s}/episode/${params.e}`}>
+              <Link href={`/watch/tv/${id}/season/${s}/episode/${e}`}>
                 <Play className="w-5 h-5 fill-current" />
                 Play
               </Link>
@@ -91,14 +92,14 @@ export default async function EpisodePage({
           <div className="flex items-center gap-3 mt-6 pt-6 border-t border-white/10">
             {prevEpisode ? (
               <Button variant="secondary" size="sm" asChild>
-                <Link href={`/tv/${params.id}/season/${params.s}/episode/${prevEpisode.episode_number}`}>
+                <Link href={`/tv/${id}/season/${s}/episode/${prevEpisode.episode_number}`}>
                   <ChevronLeft className="w-4 h-4" />
                   Prev
                 </Link>
               </Button>
             ) : seasonNum > 1 ? (
               <Button variant="secondary" size="sm" asChild>
-                <Link href={`/tv/${params.id}/season/${seasonNum - 1}/episode/1`}>
+                <Link href={`/tv/${id}/season/${seasonNum - 1}/episode/1`}>
                   <ChevronLeft className="w-4 h-4" />
                   Season {seasonNum - 1}
                 </Link>
@@ -107,14 +108,14 @@ export default async function EpisodePage({
 
             {nextEpisode ? (
               <Button variant="secondary" size="sm" asChild>
-                <Link href={`/tv/${params.id}/season/${params.s}/episode/${nextEpisode.episode_number}`}>
+                <Link href={`/tv/${id}/season/${s}/episode/${nextEpisode.episode_number}`}>
                   Next
                   <ChevronRight className="w-4 h-4" />
                 </Link>
               </Button>
             ) : seasonNum < totalSeasons ? (
               <Button variant="secondary" size="sm" asChild>
-                <Link href={`/tv/${params.id}/season/${seasonNum + 1}/episode/1`}>
+                <Link href={`/tv/${id}/season/${seasonNum + 1}/episode/1`}>
                   Season {seasonNum + 1}
                   <ChevronRight className="w-4 h-4" />
                 </Link>
@@ -134,7 +135,7 @@ export default async function EpisodePage({
             {episodes.map((ep: any) => (
               <Link
                 key={ep.episode_number}
-                href={`/tv/${params.id}/season/${params.s}/episode/${ep.episode_number}`}
+                href={`/tv/${id}/season/${s}/episode/${ep.episode_number}`}
                 className={`flex items-center gap-4 p-4 rounded-xl transition-all hover:bg-white/5 ${
                   ep.episode_number === episodeNum
                     ? 'bg-primary/10 border border-primary/20'
